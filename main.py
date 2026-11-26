@@ -29,7 +29,20 @@ def resolve_output_path():
     return "/output/entry.txt"
 
 
+def validate_entry():
+    """Guard: the placard must be one line, 1-180 non-whitespace chars,
+    valid UTF-8. Raises ValueError otherwise; never alters the text."""
+    encoded = ENTRY.encode("utf-8")  # raises UnicodeEncodeError if invalid
+    if not (1 <= len(ENTRY.strip()) <= 180):
+        raise ValueError("placard must be 1-180 non-whitespace characters")
+    if "\n" in ENTRY or "\r" in ENTRY:
+        raise ValueError("placard must be a single line")
+    if len(encoded) == 0:
+        raise ValueError("placard must not be empty")
+
+
 def main():
+    validate_entry()
     path = resolve_output_path()
     parent = os.path.dirname(path)
     if parent:
